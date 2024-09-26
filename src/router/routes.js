@@ -3,7 +3,21 @@ const routes = [
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/DashboardPage.vue") },
+      { 
+        path: "", 
+        component: () => import("pages/DashboardPage.vue"),
+        meta: { transition: 'fade' }
+      },
+      { 
+        path: "lesson-picker", 
+        component: () => import("pages/LessonPicker.vue"),
+        meta: { transition: 'fade' }
+      },
+      { 
+        path: "lesson", 
+        component: () => import("pages/LessonPage.vue"),
+        meta: { transition: 'fade' }
+      },
     ],
   },
 
@@ -12,6 +26,7 @@ const routes = [
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
+    meta: { transition: 'fade' }
   },
 ];
 
