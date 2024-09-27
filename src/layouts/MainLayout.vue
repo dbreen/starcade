@@ -13,7 +13,14 @@
 
         <q-toolbar-title>Starcade</q-toolbar-title>
 
-        <div>v0.1</div>
+        <div class="star-count">
+          <q-icon
+            name="star"
+            :color="challengeStore.totalStars > 0 ? 'yellow' : 'grey'"
+            size="24px"
+          />
+          <span class="q-ml-sm">x {{ challengeStore.totalStars }}</span>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -38,10 +45,13 @@
 <script setup>
 import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { useChallengeStore } from "../stores/challengeStore";
 
 defineOptions({
   name: "MainLayout",
 });
+
+const challengeStore = useChallengeStore();
 
 const linksList = [
   {
@@ -58,3 +68,11 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
+
+<style lang="scss" scoped>
+.star-count {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+</style>

@@ -35,9 +35,9 @@ defineOptions({
 const router = useRouter();
 
 const difficulties = ref([
-  { level: "easy", label: "Easy", color: "positive" },
-  { level: "hard", label: "Hard", color: "warning" },
-  { level: "epic", label: "Epic", color: "negative" },
+  { level: "easy", label: "Easy (1-10)", color: "positive" },
+  { level: "hard", label: "Hard (1-20)", color: "warning" },
+  { level: "epic", label: "Epic (1-20, +/-)", color: "negative" },
 ]);
 
 const selectDifficulty = (level) => {
