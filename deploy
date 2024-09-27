@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rsync -avz --delete dist/spa/ danbreen.net:danbreen.net/starcade/
+
