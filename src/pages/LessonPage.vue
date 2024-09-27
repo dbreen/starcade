@@ -1,128 +1,70 @@
 <template>
   <q-page class="flex lesson-page-container">
     <div class="content-wrapper q-pt-xl">
-      <template v-if="!showSummary">
-        <h2 class="text-h4 q-mb-md">Math Challenge</h2>
-        <q-linear-progress
-          :value="currentQuestion / totalQuestions"
-          class="q-mb-md"
-          rounded
-          size="20px"
-          color="purple"
-        >
-          <div class="absolute-full flex flex-center">
-            <q-badge
-              color="white"
-              text-color="black"
-              :label="`${currentQuestion} of ${totalQuestions}`"
+      <h2 class="text-h4 q-mb-md">Math Challenge</h2>
+      <q-linear-progress
+        :value="currentQuestion / totalQuestions"
+        class="q-mb-md"
+        rounded
+        size="20px"
+        color="purple"
+      >
+        <div class="absolute-full flex flex-center">
+          <q-badge
+            color="white"
+            text-color="black"
+            :label="`${currentQuestion} of ${totalQuestions}`"
+          />
+        </div>
+      </q-linear-progress>
+      <div class="question-container q-mb-md">
+        <div class="row items-center">
+          <div class="col-6 text-right q-pr-sm">
+            <p class="text-h5 q-mb-none">{{ currentMathQuestion }} =</p>
+          </div>
+          <div class="col-6 text-left q-pl-sm">
+            <q-input
+              v-model.number="userAnswer"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              filled
+              dense
+              class="answer-input"
+              ref="answerInput"
+              @keyup.enter="checkAnswer"
             />
-          </div>
-        </q-linear-progress>
-        <div class="question-container q-mb-md">
-          <div class="row items-center">
-            <div class="col-6 text-right q-pr-sm">
-              <p class="text-h5 q-mb-none">{{ currentMathQuestion }} =</p>
-            </div>
-            <div class="col-6 text-left q-pl-sm">
-              <q-input
-                v-model.number="userAnswer"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                filled
-                dense
-                class="answer-input"
-                ref="answerInput"
-                @keyup.enter="checkAnswer"
-              />
-            </div>
-          </div>
-          <div class="row items-center justify-center q-mt-sm">
-            <div class="button-icon-wrapper">
-              <q-btn
-                :label="currentQuestion === totalQuestions ? 'Finish' : 'Check'"
-                color="primary"
-                @click="checkAnswer"
-                class="go-btn"
-                :disable="isProcessing || !isInputValid"
-              />
-              <q-icon
-                v-if="answerIcon"
-                :name="answerIcon"
-                size="24px"
-                :color="answerIcon === 'check_circle' ? 'positive' : 'negative'"
-                class="answer-icon"
-              />
-            </div>
           </div>
         </div>
-      </template>
-      <template v-else>
-        <h2 class="text-h4 q-mb-md">Challenge Complete!</h2>
-        <div class="summary-container q-pa-md">
-          <p class="text-h6">Correct Answers: {{ correctAnswers }}</p>
-          <p class="text-subtitle1">
-            Difficulty:
-            {{ difficulty.charAt(0).toUpperCase() + difficulty.slice(1) }}
-          </p>
-          <div class="stars-container q-mt-md">
-            <q-icon
-              v-for="star in 3"
-              :key="star"
-              name="star"
-              size="40px"
-              :color="star <= baseStars ? 'yellow' : 'grey'"
-            />
-          </div>
-          <div v-if="correctAnswers === 0" class="sad-face-container q-mt-md">
-            <q-icon
-              name="sentiment_very_dissatisfied"
-              size="60px"
-              color="grey"
-            />
-          </div>
-          <div v-if="bonusStar" class="bonus-star q-mt-md">
-            <q-icon name="star" size="40px" color="purple" />
-            <span class="text-h6 q-ml-sm">Bonus Star for 100% Completion!</span>
-          </div>
-          <p class="text-h6 q-mt-md">
-            Stars Earned: {{ baseStars }}
-            <span v-if="bonusStar" style="color: purple"> + 1 </span>
-          </p>
-          <p class="text-h6">Total Stars: {{ challengeStore.totalStars }}</p>
-          <div class="q-mt-md">
+        <div class="row items-center justify-center q-mt-sm">
+          <div class="button-icon-wrapper">
             <q-btn
-              v-if="correctAnswers === 0"
-              label="Try Again"
-              color="secondary"
-              @click="resetChallenge"
-              class="go-btn q-mb-md"
-            />
-            <q-btn
-              label="Back to Dashboard"
+              :label="currentQuestion === totalQuestions ? 'Finish' : 'Check'"
               color="primary"
-              @click="router.push('/')"
+              @click="checkAnswer"
               class="go-btn"
+              :disable="isProcessing || !isInputValid"
+            />
+            <q-icon
+              v-if="answerIcon"
+              :name="answerIcon"
+              size="24px"
+              :color="answerIcon === 'check_circle' ? 'positive' : 'negative'"
+              class="answer-icon"
             />
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </q-page>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useChallengeStore } from "../stores/challengeStore";
-import confetti from "canvas-confetti";
-
-defineOptions({
-  name: "LessonPage",
-});
 
 const router = useRouter();
-const route = useRoute();
 const challengeStore = useChallengeStore();
 const answerInput = ref(null);
 const totalQuestions = 5;
@@ -130,27 +72,11 @@ const currentQuestion = ref(1);
 const userAnswer = ref(null);
 const answerIcon = ref(null);
 const isProcessing = ref(false);
-const correctAnswers = ref(0);
-const showSummary = ref(false);
-const difficulty = ref(route.query.difficulty || "easy");
+
+const difficulty = computed(() => challengeStore.difficulty);
 
 const isInputValid = computed(() => {
   return userAnswer.value !== null && userAnswer.value !== "";
-});
-
-const baseStars = computed(() => {
-  if (correctAnswers.value === 0) return 0;
-  if (difficulty.value === "easy") return 1;
-  if (difficulty.value === "hard") return 2;
-  return 3;
-});
-
-const bonusStar = computed(() => {
-  return correctAnswers.value === totalQuestions;
-});
-
-const totalStars = computed(() => {
-  return baseStars.value + (bonusStar.value ? 1 : 0);
 });
 
 const generateMathQuestion = () => {
@@ -189,6 +115,7 @@ const focusInput = () => {
 };
 
 onMounted(() => {
+  challengeStore.setTotalQuestions(totalQuestions);
   focusInput();
 });
 
@@ -199,7 +126,7 @@ const checkAnswer = () => {
   const correctAnswer = eval(currentMathQuestion.value);
   if (userAnswer.value === correctAnswer) {
     answerIcon.value = "check_circle";
-    correctAnswers.value++;
+    challengeStore.incrementCorrectAnswers();
   } else {
     answerIcon.value = "cancel";
   }
@@ -212,33 +139,11 @@ const checkAnswer = () => {
       answerIcon.value = null;
       focusInput();
     } else {
-      // Show summary
-      showSummary.value = true;
-      challengeStore.updateStars(totalStars.value);
-      triggerConfetti();
+      // Navigate to results page
+      router.push({ name: 'ResultsPage' });
     }
     isProcessing.value = false;
   }, 1000);
-};
-
-const triggerConfetti = () => {
-  if (correctAnswers.value > 0) {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  }
-};
-
-const resetChallenge = () => {
-  currentQuestion.value = 1;
-  correctAnswers.value = 0;
-  showSummary.value = false;
-  currentMathQuestion.value = generateMathQuestion();
-  userAnswer.value = null;
-  answerIcon.value = null;
-  focusInput();
 };
 </script>
 
@@ -297,23 +202,5 @@ const resetChallenge = () => {
   right: -40px;
   top: 50%;
   transform: translateY(-50%);
-}
-
-.summary-container {
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  width: 100%;
-}
-
-.stars-container,
-.bonus-star {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.bonus-star {
-  color: purple;
 }
 </style>

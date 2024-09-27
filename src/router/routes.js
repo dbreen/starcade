@@ -15,7 +15,14 @@ const routes = [
       },
       { 
         path: "lesson", 
+        name: "LessonPage",
         component: () => import("pages/LessonPage.vue"),
+        meta: { transition: 'fade' }
+      },
+      {
+        path: "results",
+        name: "ResultsPage",
+        component: () => import("pages/ResultsPage.vue"),
         meta: { transition: 'fade' }
       },
     ],
