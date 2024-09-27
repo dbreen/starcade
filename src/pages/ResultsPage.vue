@@ -1,8 +1,8 @@
 <template>
   <q-page class="flex results-page-container">
     <div class="content-wrapper q-pt-xl">
-      <h2 class="text-h4 q-mb-md">Challenge Complete!</h2>
       <div class="summary-container q-pa-md">
+        <h2 class="text-h4 q-mb-md">Challenge Complete!</h2>
         <p class="text-h6">Correct Answers: {{ correctAnswers }}</p>
         <p class="text-subtitle1">
           Difficulty:
@@ -18,15 +18,11 @@
           />
         </div>
         <div v-if="correctAnswers === 0" class="sad-face-container q-mt-md">
-          <q-icon
-            name="sentiment_very_dissatisfied"
-            size="60px"
-            color="grey"
-          />
+          <q-icon name="sentiment_very_dissatisfied" size="60px" color="grey" />
         </div>
         <div v-if="bonusStar" class="bonus-star q-mt-md">
           <q-icon name="star" size="40px" color="purple" />
-          <span class="text-h6 q-ml-sm">Bonus Star for 100% Completion!</span>
+          <span class="text-h6 q-ml-sm">Bonus Star for 100% Correct!</span>
         </div>
         <p class="text-h6 q-mt-md">
           Stars Earned: {{ baseStars }}
@@ -98,7 +94,7 @@ const triggerConfetti = () => {
 
 const resetChallenge = () => {
   challengeStore.resetChallenge();
-  router.push({ name: 'LessonPage', query: { difficulty: difficulty.value } });
+  router.push({ name: "LessonPage", query: { difficulty: difficulty.value } });
 };
 </script>
 

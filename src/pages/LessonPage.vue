@@ -1,60 +1,62 @@
 <template>
   <q-page class="flex lesson-page-container">
     <div class="content-wrapper q-pt-xl">
-      <h2 class="text-h4 q-mb-md">Math Challenge</h2>
-      <q-linear-progress
-        :value="currentQuestion / totalQuestions"
-        class="q-mb-md"
-        rounded
-        size="20px"
-        color="purple"
-      >
-        <div class="absolute-full flex flex-center">
-          <q-badge
-            color="white"
-            text-color="black"
-            :label="`${currentQuestion} of ${totalQuestions}`"
-          />
-        </div>
-      </q-linear-progress>
-      <div class="question-container q-mb-md">
-        <div class="row items-center">
-          <div class="col-6 text-right q-pr-sm">
-            <p class="text-h5 q-mb-none">{{ currentMathQuestion }} =</p>
-          </div>
-          <div class="col-6 text-left q-pl-sm">
-            <q-input
-              v-model.number="userAnswer"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              filled
-              dense
-              class="answer-input"
-              ref="answerInput"
-              @keyup.enter="checkAnswer"
+      <q-card class="q-pa-lg question-container">
+        <h2 class="text-h4 q-mb-md">Math Challenge</h2>
+        <q-linear-progress
+          :value="currentQuestion / totalQuestions"
+          class="q-mb-md"
+          rounded
+          size="20px"
+          color="purple"
+        >
+          <div class="absolute-full flex flex-center">
+            <q-badge
+              color="white"
+              text-color="black"
+              :label="`${currentQuestion} of ${totalQuestions}`"
             />
           </div>
-        </div>
-        <div class="row items-center justify-center q-mt-sm">
-          <div class="button-icon-wrapper">
-            <q-btn
-              :label="currentQuestion === totalQuestions ? 'Finish' : 'Check'"
-              color="primary"
-              @click="checkAnswer"
-              class="go-btn"
-              :disable="isProcessing || !isInputValid"
-            />
-            <q-icon
-              v-if="answerIcon"
-              :name="answerIcon"
-              size="24px"
-              :color="answerIcon === 'check_circle' ? 'positive' : 'negative'"
-              class="answer-icon"
-            />
+        </q-linear-progress>
+        <div class="q-mb-md">
+          <div class="row items-center">
+            <div class="col-6 text-right q-pr-sm">
+              <p class="text-h5 q-mb-none">{{ currentMathQuestion }} =</p>
+            </div>
+            <div class="col-6 text-left q-pl-sm">
+              <q-input
+                v-model.number="userAnswer"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                filled
+                dense
+                class="answer-input"
+                ref="answerInput"
+                @keyup.enter="checkAnswer"
+              />
+            </div>
+          </div>
+          <div class="row items-center justify-center q-mt-sm">
+            <div class="button-icon-wrapper">
+              <q-btn
+                :label="currentQuestion === totalQuestions ? 'Finish' : 'Check'"
+                color="primary"
+                @click="checkAnswer"
+                class="go-btn"
+                :disable="isProcessing || !isInputValid"
+              />
+              <q-icon
+                v-if="answerIcon"
+                :name="answerIcon"
+                size="24px"
+                :color="answerIcon === 'check_circle' ? 'positive' : 'negative'"
+                class="answer-icon"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -140,7 +142,7 @@ const checkAnswer = () => {
       focusInput();
     } else {
       // Navigate to results page
-      router.push({ name: 'ResultsPage' });
+      router.push({ name: "ResultsPage" });
     }
     isProcessing.value = false;
   }, 1000);

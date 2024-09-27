@@ -1,10 +1,10 @@
 <template>
   <q-page class="lesson-picker-container q-pa-md">
-    <q-card class="content-wrapper q-pa-lg" bordered>
+    <q-card class="content-wrapper q-pa-lg">
       <div class="challenge-type q-mb-lg">
-        <q-item-section>
-          <h2 class="text-h5">Choose Challenge</h2>
-        </q-item-section>
+        <h2 class="text-h5">Choose Challenge:</h2>
+
+        <q-separator />
 
         <h3 class="text-h5 q-mb-sm">Challenge Type</h3>
         <q-option-group
