@@ -18,7 +18,7 @@
             <div v-for="(stars, day) in dailyStars" :key="day" class="day-item">
               <div class="day-label">{{ day.slice(0, 3) }}</div>
               <q-circular-progress
-                :value="stars"
+                :value="stars * 10"
                 size="50px"
                 :thickness="0.2"
                 color="primary"
