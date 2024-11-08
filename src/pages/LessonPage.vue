@@ -63,10 +63,11 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useChallengeStore } from "../stores/challengeStore";
 
 const router = useRouter();
+const route = useRoute();
 const challengeStore = useChallengeStore();
 const answerInput = ref(null);
 const totalQuestions = 5;
@@ -75,7 +76,8 @@ const userAnswer = ref(null);
 const answerIcon = ref(null);
 const isProcessing = ref(false);
 
-const difficulty = computed(() => challengeStore.difficulty);
+// Use route query param for difficulty instead of store
+const difficulty = computed(() => route.query.difficulty || "easy");
 
 const isInputValid = computed(() => {
   return userAnswer.value !== null && userAnswer.value !== "";
@@ -83,22 +85,35 @@ const isInputValid = computed(() => {
 
 const generateMathQuestion = () => {
   let num1, num2, operation;
+  const operations = {
+    easy: ["+"],
+    hard: ["+", "-"],
+    epic: ["+", "-", "*"],
+  };
 
   switch (difficulty.value) {
     case "easy":
-      num1 = Math.floor(Math.random() * 10) + 1;
-      num2 = Math.floor(Math.random() * 10) + 1;
+      // Easy: Numbers 1-12, addition only
+      num1 = Math.floor(Math.random() * 12) + 1;
+      num2 = Math.floor(Math.random() * 12) + 1;
       operation = "+";
       break;
     case "hard":
-      num1 = Math.floor(Math.random() * 20) + 1;
-      num2 = Math.floor(Math.random() * 20) + 1;
-      operation = "+";
+      // Hard: Numbers 1-25, addition and subtraction
+      num1 = Math.floor(Math.random() * 25) + 1;
+      num2 = Math.floor(Math.random() * 25) + 1;
+      operation =
+        operations.hard[Math.floor(Math.random() * operations.hard.length)];
+      if (operation === "-" && num1 < num2) {
+        [num1, num2] = [num2, num1]; // Swap to ensure positive result
+      }
       break;
     case "epic":
-      num1 = Math.floor(Math.random() * 20) + 1;
-      num2 = Math.floor(Math.random() * 20) + 1;
-      operation = Math.random() < 0.5 ? "+" : "-";
+      // Epic: Numbers 1-50, addition, subtraction, and multiplication
+      num1 = Math.floor(Math.random() * 50) + 1;
+      num2 = Math.floor(Math.random() * 12) + 1; // Smaller second number for multiplication
+      operation =
+        operations.epic[Math.floor(Math.random() * operations.epic.length)];
       if (operation === "-" && num1 < num2) {
         [num1, num2] = [num2, num1]; // Swap to ensure positive result
       }
@@ -118,6 +133,8 @@ const focusInput = () => {
 
 onMounted(() => {
   challengeStore.setTotalQuestions(totalQuestions);
+  // Set the difficulty in store to match route query
+  challengeStore.setDifficulty(difficulty.value);
   focusInput();
 });
 
